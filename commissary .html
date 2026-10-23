@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chick Pastil Commissary Management System</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#1b3b1e',      /* Deep Commissary Green */
+                            accent: '#427d27',    /* Vibrant Action Green */
+                            amber: '#f59e0b',     /* Pending / Warning Amber */
+                            red: '#dc2626',       /* Warning / Alert Red */
+                            bg: '#f3f4f6',        /* Light Gray App Background */
+                            panel: '#ffffff'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Html5-QRCode Library for WebCam Barcode & QR Scanning -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-brand-bg font-sans text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-brand-dark text-white shadow-md no-print">
+        <div class="max-w-7xl mx-auto px-4 py-2 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <!-- Authentic Logo Render Header -->
+                <div class="bg-white px-3 py-1 rounded-lg shadow flex items-center justify-center border border-gray-100">
+                    <div class="text-center font-black tracking-tight leading-none text-red-600 text-xs">
+                        <span class="block text-[8px] text-red-700 tracking-widest font-extrabold uppercase">Tine's Kitchen</span>
+                        <span class="text-sm font-extrabold text-red-600 tracking-wider">CHICK<span class="text-green-800 font-black px-0.5">N</span>PASTIL</span>
+                    </div>
+                </div>
+                <span class="text-sm font-semibold tracking-wide text-gray-200 border-l border-gray-600 pl-3">Commissary Management System</span>
+            </div>
+            <div class="flex items-center space-x-3 text-sm">
+                <div class="w-9 h-9 rounded-full bg-brand-accent flex items-center justify-center font-bold text-white shadow border border-white/20">US</div>
+                <div>
+                    <p class="font-bold leading-none">User Staff Full Name</p>
+                    <p class="text-xs text-gray-300">User Staff Role</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Application Shell -->
+    <div class="flex-1 flex max-w-7xl w-full mx-auto my-4 bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+        
+        <!-- Sidebar Menu -->
+        <aside class="w-64 bg-brand-dark text-white p-4 flex flex-col justify-between no-print">
+            <div>
+                <!-- Authentic Logo Render Sidebar -->
+                <div class="bg-white p-3 rounded-xl mb-6 shadow-md flex flex-col items-center justify-center border border-gray-100">
+                    <span class="text-[9px] font-black text-red-700 uppercase tracking-widest">TINE'S KITCHEN</span>
+                    <div class="text-lg font-black text-red-600 tracking-wider flex items-center my-0.5">
+                        <span>CHICK</span>
+                        <span class="bg-green-800 text-white px-1.5 py-0.5 rounded text-xs mx-1 font-extrabold">N</span>
+                        <span>PASTIL</span>
+                    </div>
+                    <span class="text-[8px] text-green-800 font-bold uppercase tracking-wider">Authentic Foodhouse</span>
+                </div>
+
+                <nav class="space-y-2">
+                    <p class="text-xs text-gray-400 uppercase font-semibold px-3 mb-2">Main Menu</p>
+                    <button onclick="switchTab('raw-materials')" id="nav-raw-materials" class="w-full text-left px-4 py-2.5 rounded-lg transition font-medium text-sm flex items-center space-x-2 bg-brand-accent text-white">
+                        <span>📦 Raw Materials</span>
+                    </button>
+                    <button onclick="switchTab('active-batches')" id="nav-active-batches" class="w-full text-left px-4 py-2.5 rounded-lg transition font-medium text-sm flex items-center space-x-2 text-gray-300 hover:bg-white/10">
+                        <span>🍳 Active Batches</span>
+                    </button>
+                    <button onclick="switchTab('deliveries')" id="nav-deliveries" class="w-full text-left px-4 py-2.5 rounded-lg transition font-medium text-sm flex items-center space-x-2 text-gray-300 hover:bg-white/10">
+                        <span>🚚 Deliveries & Logistics</span>
+                    </button>
+                    <button onclick="switchTab('purchase-orders')" id="nav-purchase-orders" class="w-full text-left px-4 py-2.5 rounded-lg transition font-medium text-sm flex items-center space-x-2 text-gray-300 hover:bg-white/10">
+                        <span>📑 Purchase Orders</span>
+                    </button>
+                </nav>
+            </div>
+
+            <div class="text-xs text-gray-400 text-center border-t border-gray-700 pt-4">
+                Chick Pastil © 2026<br/>Thesis Prototype
+            </div>
+        </aside>
+
+        <!-- Dynamic Screen Area -->
+        <main class="flex-1 p-6 bg-gray-50 overflow-y-auto">
+
+            <!-- SCREEN 1: RAW MATERIALS MODULE -->
+            <section id="screen-raw-materials" class="space-y-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-brand-dark">Raw Materials Inventory</h1>
+                        <p class="text-sm text-gray-500">Scan items or manually adjust stock levels.</p>
+                    </div>
+                    <button onclick="openScanModal()" class="bg-brand-accent hover:bg-green-700 text-white font-bold px-5 py-2.5 rounded-lg shadow flex items-center space-x-2 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        <span>Scan Barcode / QR</span>
+                    </button>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left text-sm text-gray-700">
+                        <thead class="bg-gray-100 text-gray-600 font-semibold border-b">
+                            <tr>
+                                <th class="p-3">Item ID</th>
+                                <th class="p-3">Material Name</th>
+                                <th class="p-3">Category</th>
+                                <th class="p-3">Current Stock</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="p-3 font-mono text-xs font-bold text-gray-600">#RM-1001</td>
+                                <td class="p-3 font-semibold text-gray-900">Dressed Chicken</td>
+                                <td class="p-3">Poultry / Raw Meat</td>
+                                <td class="p-3 font-bold text-red-600">120.0 kg</td>
+                                <td class="p-3"><span class="bg-red-100 text-red-700 px-2.5 py-1 rounded-full text-xs font-bold">Low Stock (Min: 150kg)</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openAdjustmentModal('Dressed Chicken', 'RM-1001', 120.0)" class="bg-brand-accent text-white px-3 py-1.5 rounded font-bold text-xs hover:bg-green-700 transition">Adjust Stock</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-mono text-xs font-bold text-gray-600">#RM-1002</td>
+                                <td class="p-3 font-semibold text-gray-900">Jasmine Rice</td>
+                                <td class="p-3">Grains</td>
+                                <td class="p-3 font-bold text-gray-800">450.0 kg</td>
+                                <td class="p-3"><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-bold">In Stock</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openAdjustmentModal('Jasmine Rice', 'RM-1002', 450.0)" class="bg-brand-accent text-white px-3 py-1.5 rounded font-bold text-xs hover:bg-green-700 transition">Adjust Stock</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SCREEN 2: ACTIVE BATCHES MODULE -->
+            <section id="screen-active-batches" class="space-y-6 hidden">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-brand-dark">Active Kitchen Batches</h1>
+                        <p class="text-sm text-gray-500">Monitor kitchen cooking runs and recipe auto-deductions.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left text-sm text-gray-700">
+                        <thead class="bg-gray-100 text-gray-600 font-semibold border-b">
+                            <tr>
+                                <th class="p-3">Batch ID</th>
+                                <th class="p-3">Recipe Target</th>
+                                <th class="p-3">Target Yield</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="p-3 font-mono text-xs font-bold text-gray-600">#BATCH-2026-004</td>
+                                <td class="p-3 font-semibold text-gray-900">Classic Chicken Pastil Tubs</td>
+                                <td class="p-3">300 Tubs</td>
+                                <td class="p-3"><span class="bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full text-xs font-bold">Low Ingredient Alert</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openRecipeModal('FAILED')" class="bg-brand-accent text-white px-3 py-1.5 rounded font-bold text-xs hover:bg-green-700 transition">View / Scan QR</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-mono text-xs font-bold text-gray-600">#BATCH-2026-005</td>
+                                <td class="p-3 font-semibold text-gray-900">Spicy Pastil Tubs</td>
+                                <td class="p-3">150 Tubs</td>
+                                <td class="p-3"><span class="bg-green-100 text-green-800 px-2.5 py-1 rounded-full text-xs font-bold">Ready to Start</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openRecipeModal('SUCCESS')" class="bg-brand-accent text-white px-3 py-1.5 rounded font-bold text-xs hover:bg-green-700 transition">View / Scan QR</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SCREEN 3: DELIVERIES MODULE -->
+            <section id="screen-deliveries" class="space-y-6 hidden">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-brand-dark">Deliveries & Logistics</h1>
+                        <p class="text-sm text-gray-500">Manage branch orders and vehicle dispatching.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left text-sm text-gray-700">
+                        <thead class="bg-gray-100 text-gray-600 font-semibold border-b">
+                            <tr>
+                                <th class="p-3">Delivery ID</th>
+                                <th class="p-3">Branch Name</th>
+                                <th class="p-3">Items Summary</th>
+                                <th class="p-3">Status</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="p-3 font-mono text-xs font-bold text-gray-600">#DEL-2026-001</td>
+                                <td class="p-3 font-semibold text-gray-900">Balagtas Branch</td>
+                                <td class="p-3">70 Total Units</td>
+                                <td class="p-3"><span class="bg-green-100 text-green-800 px-2.5 py-1 rounded-full text-xs font-bold">Ready to Dispatch</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openDeliveryModal('READY')" class="bg-brand-accent text-white px-3 py-1.5 rounded font-bold text-xs hover:bg-green-700 transition">View Order</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-mono text-xs font-bold text-gray-600">#DEL-2026-003</td>
+                                <td class="p-3 font-semibold text-gray-900">Meycauayan Branch</td>
+                                <td class="p-3">50 Total Units</td>
+                                <td class="p-3"><span class="bg-red-100 text-red-800 px-2.5 py-1 rounded-full text-xs font-bold">Low Cold Storage</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openDeliveryModal('WARNING')" class="bg-brand-accent text-white px-3 py-1.5 rounded font-bold text-xs hover:bg-green-700 transition">View Order</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- SCREEN 4: PURCHASE ORDERS MODULE -->
+            <section id="screen-purchase-orders" class="space-y-6 hidden">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-brand-dark">Purchase Orders & Procurement</h1>
+                        <p class="text-sm text-gray-500">Automated procurement drafts triggered by low stock thresholds.</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="bg-brand-accent text-white font-bold text-xs px-4 py-2 rounded-lg shadow">Generate POs from Low Stock</button>
+                        <button class="bg-brand-amber text-white font-bold text-xs px-4 py-2 rounded-lg shadow">Pending Draft (19)</button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <table class="w-full text-left text-sm text-gray-700">
+                        <thead class="bg-gray-100 text-gray-600 font-semibold border-b">
+                            <tr>
+                                <th class="p-3">PO Number</th>
+                                <th class="p-3">Supplier Name</th>
+                                <th class="p-3">Total Value</th>
+                                <th class="p-3">Trigger Reason</th>
+                                <th class="p-3 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y">
+                            <tr>
+                                <td class="p-3 font-mono text-xs font-bold text-gray-600">#PO-2026-089</td>
+                                <td class="p-3 font-semibold text-gray-900">Magnolia Poultry</td>
+                                <td class="p-3 font-bold text-gray-900">₱ 45,000.00</td>
+                                <td class="p-3"><span class="bg-red-100 text-red-800 px-2.5 py-1 rounded-full text-xs font-bold">Low Stock</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openPOModal('#PO-2026-089')" class="bg-brand-accent text-white px-3 py-1.5 rounded font-bold text-xs hover:bg-green-700 transition">Review Draft</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-mono text-xs font-bold text-gray-600">#PO-2026-090</td>
+                                <td class="p-3 font-semibold text-gray-900">San Miguel Oils</td>
+                                <td class="p-3 font-bold text-gray-900">₱ 12,500.00</td>
+                                <td class="p-3"><span class="bg-red-100 text-red-800 px-2.5 py-1 rounded-full text-xs font-bold">Low Stock</span></td>
+                                <td class="p-3 text-center">
+                                    <button onclick="openPOModal('#PO-2026-090')" class="bg-brand-accent text-white px-3 py-1.5 rounded font-bold text-xs hover:bg-green-700 transition">Review Draft</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MODAL CONTAINER OVERLAY -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div id="modal-content" class="bg-white rounded-xl shadow-2xl max-w-xl w-full p-6 relative transform transition-all border border-gray-200">
+            <!-- Modal Body Injected Dynamically -->
+        </div>
+    </div>
+
+    <!-- PRINTABLE DOCUMENT CONTAINER -->
+    <div id="printable-area" class="hidden"></div>
+
+    <!-- COMPLETE JAVASCRIPT LOGIC -->
+    <script>
+        // Tab Navigation Switcher
+        function switchTab(tabId) {
+            ['raw-materials', 'active-batches', 'deliveries', 'purchase-orders'].forEach(id => {
+                const screen = document.getElementById(`screen-${id}`);
+                const nav = document.getElementById(`nav-${id}`);
+                if(screen) screen.classList.add('hidden');
+                if(nav) nav.className = "w-full text-left px-4 py-2.5 rounded-lg transition font-medium text-sm flex items-center space-x-2 text-gray-300 hover:bg-white/10";
+            });
+            const activeScreen = document.getElementById(`screen-${tabId}`);
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if(activeScreen) activeScreen.classList.remove('hidden');
+            if(activeNav) activeNav.className = "w-full text-left px-4 py-2.5 rounded-lg transition font-medium text-sm flex items-center space-x-2 bg-brand-accent text-white";
+        }
+
+        // Modal Helpers
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.add('hidden');
+            if (window.html5QrcodeScanner) {
+                window.html5QrcodeScanner.clear().catch(e => console.error(e));
+            }
+        }
+
+        function showModalHtml(html) {
+            const container = document.getElementById('modal-content');
+            container.innerHTML = html;
+            document.getElementById('modal-overlay').classList.remove('hidden');
+        }
+
+        // EXACT ORIGINAL SCANNER INTERFACE (MATCHING YOUR SCREENSHOT)
+        function openScanModal() {
+            showModalHtml(`
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold z-20">✕</button>
+                <h2 class="text-xl font-bold text-brand-dark mb-1">Scan Item Barcode / QR</h2>
+                <p class="text-xs text-gray-500 mb-3">Position barcode/QR code inside camera frame to auto-fill stock details.</p>
+                
+                <!-- html5-qrcode Library Mount Point -->
+                <div id="qr-reader" class="w-full bg-gray-100 rounded-xl overflow-hidden min-h-[220px] border border-gray-200"></div>
+                
+                <div class="mt-4 text-center">
+                    <button onclick="simulateScanSuccess()" class="text-xs font-bold text-brand-accent underline hover:text-green-800">
+                        Click Here for Manual Entry (Simulate Scan)
+                    </button>
+                </div>
+            `);
+
+            setTimeout(() => {
+                try {
+                    const html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { 
+                        fps: 10, 
+                        qrbox: { width: 200, height: 200 },
+                        rememberLastUsedCamera: true
+                    }, false);
+                    
+                    window.html5QrcodeScanner = html5QrcodeScanner;
+                    
+                    html5QrcodeScanner.render((decodedText) => {
+                        html5QrcodeScanner.clear();
+                        simulateScanSuccess();
+                    }, (error) => {});
+                } catch(e) {
+                    console.log("Scanner ready.");
+                }
+            }, 100);
+        }
+
+        function simulateScanSuccess() {
+            openAdjustmentModal('Dressed Chicken', 'RM-1001', 120.0);
+        }
+
+        // RAW MATERIALS: ADJUSTMENT MODAL
+        function openAdjustmentModal(itemName, itemId, currentQty) {
+            showModalHtml(`
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+                <h2 class="text-xl font-bold text-brand-dark mb-1">Stock Adjustment Form</h2>
+                <p class="text-xs text-gray-500 mb-4 font-mono">Item ID: #${itemId}</p>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 p-3 rounded-lg border">
+                        <p class="text-xs text-gray-500">Material Name</p>
+                        <p class="text-base font-bold text-gray-800">${itemName}</p>
+                        <p class="text-xs text-gray-500 mt-1">Current Balance: <span class="font-bold text-gray-800">${currentQty} kg</span></p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Adjustment Type</label>
+                        <select id="adj-type" class="w-full border rounded-lg p-2 text-sm bg-white font-medium">
+                            <option value="restock">Restock (+ Addition)</option>
+                            <option value="spoilage">Spoilage / Waste (- Deduction)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Quantity (kg / L)</label>
+                        <input type="number" id="adj-qty" value="50.0" class="w-full border rounded-lg p-2 text-sm font-bold text-gray-800">
+                    </div>
+
+                    <div class="flex space-x-3 pt-2">
+                        <button onclick="closeModal()" class="w-1/2 bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm hover:bg-red-700 transition">CANCEL</button>
+                        <button onclick="saveStockAdjustment('${itemName}', '${itemId}')" class="w-1/2 bg-brand-accent text-white font-bold py-2.5 rounded-lg text-sm hover:bg-green-700 transition">SAVE & UPDATE INVENTORY</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function saveStockAdjustment(itemName, itemId) {
+            showModalHtml(`
+                <div class="text-center py-4 space-y-4">
+                    <div class="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">✓</div>
+                    <h2 class="text-2xl font-black text-brand-dark">INVENTORY UPDATED SUCCESSFULLY!!</h2>
+                    <p class="text-sm text-gray-600">Stock balance for <strong>${itemName}</strong> (#${itemId}) has been updated in the database.</p>
+                    <div class="flex justify-center space-x-3 pt-2">
+                        <button onclick="printDocument('Stock Tag - ${itemName}', 'Item ID: #${itemId}\\nDate: Oct 2026')" class="bg-amber-500 text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-amber-600">PRINT STOCK TAG</button>
+                        <button onclick="closeModal()" class="bg-brand-accent text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-green-700">DONE & RETURN TO STOCK TABLE</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        // BATCHES MODAL
+        function openRecipeModal(status) {
+            if (status === 'SUCCESS') {
+                showModalHtml(`
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+                    <h2 class="text-xl font-bold text-brand-dark">Recipe Details - #BATCH-2026-005</h2>
+                    <p class="text-xs text-gray-500 mb-4">Spicy Pastil Tubs (Yield: 150 Tubs)</p>
+
+                    <div class="bg-green-50 border border-green-200 p-3 rounded-lg mb-4 text-xs text-green-800 font-semibold">
+                        ✓ All required ingredients available in inventory storage.
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <button onclick="closeModal()" class="w-1/2 bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm">CANCEL</button>
+                        <button onclick="executeBatchSuccess()" class="w-1/2 bg-brand-accent text-white font-bold py-2.5 rounded-lg text-sm hover:bg-green-700">CONFIRM & EXECUTE BATCH</button>
+                    </div>
+                `);
+            } else {
+                showModalHtml(`
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+                    <div class="text-center text-red-600 font-bold mb-2 text-lg">⚠️ PRODUCTION WARNING!</div>
+                    <h2 class="text-xl font-extrabold text-gray-900 text-center">Cannot Execute Batch #BATCH-2026-004</h2>
+                    <p class="text-xs text-gray-500 text-center mb-4">Insufficient Raw Materials in Stock</p>
+
+                    <div class="bg-red-50 border border-red-200 p-3 rounded-lg text-xs text-red-800 mb-4 space-y-1">
+                        <p><strong>Required:</strong> Dressed Chicken: 150.0 kg</p>
+                        <p><strong>Available:</strong> 120.0 kg (Shortage: 30.0 kg)</p>
+                        <p class="pt-1 text-gray-700"><strong>System Action:</strong> Auto-generated Draft Purchase Order #PO-2026-089 in procurement background.</p>
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <button onclick="closeModal()" class="w-1/2 bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm">BACK TO BATCHES</button>
+                        <button onclick="closeModal(); switchTab('purchase-orders'); openPOModal('#PO-2026-089');" class="w-1/2 bg-brand-accent text-white font-bold py-2.5 rounded-lg text-sm hover:bg-green-700">VIEW DRAFT PURCHASE ORDER</button>
+                    </div>
+                `);
+            }
+        }
+
+        function executeBatchSuccess() {
+            showModalHtml(`
+                <div class="text-center py-4 space-y-4">
+                    <div class="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">✓</div>
+                    <h2 class="text-2xl font-black text-brand-dark">BATCH PRODUCTION STARTED SUCCESSFULLY!</h2>
+                    <p class="text-sm text-gray-600">Ingredients automatically deducted from raw material inventory.</p>
+                    <div class="flex justify-center space-x-3 pt-2">
+                        <button onclick="printDocument('Kitchen Batch Slip - #BATCH-2026-005', 'Recipe: Spicy Pastil Tubs\\nYield: 150 Tubs')" class="bg-amber-500 text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-amber-600">PRINT KITCHEN SLIP</button>
+                        <button onclick="closeModal()" class="bg-brand-accent text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-green-700">DONE & RETURN TO BATCHES</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        // DELIVERIES MODAL
+        function openDeliveryModal(status) {
+            if (status === 'READY') {
+                showModalHtml(`
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+                    <h2 class="text-xl font-bold text-brand-dark">Delivery Order Details - #DEL-2026-001</h2>
+                    <p class="text-xs text-gray-500 mb-4">Destination: Balagtas Branch | Assigned Driver: Kuya Brent</p>
+
+                    <div class="bg-green-50 border border-green-200 p-3 rounded-lg mb-4 text-xs text-green-800 font-semibold">
+                        ✓ All Items Available in Cold Storage (70 Total Units)
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <button onclick="closeModal()" class="w-1/2 bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm">CANCEL</button>
+                        <button onclick="dispatchDeliverySuccess()" class="w-1/2 bg-brand-accent text-white font-bold py-2.5 rounded-lg text-sm hover:bg-green-700">DISPATCH & AUTO-DEDUCT STOCK</button>
+                    </div>
+                `);
+            } else {
+                showModalHtml(`
+                    <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+                    <div class="text-center text-red-600 font-bold mb-2 text-lg">⚠️ DISPATCH WARNING!</div>
+                    <h2 class="text-xl font-extrabold text-gray-900 text-center">Meycauayan Branch - #DEL-2026-003</h2>
+                    <p class="text-xs text-gray-500 text-center mb-4">Cannot Dispatch Shipment!</p>
+
+                    <div class="bg-red-50 border border-red-200 p-3 rounded-lg text-xs text-red-800 mb-4 space-y-1">
+                        <p><strong>Issue Detected:</strong> Insufficient Finished Goods in Cold Storage</p>
+                        <p><strong>Frozen Chicken Pastil Tubs:</strong> Required: 50 | Available: 10</p>
+                        <p class="pt-1 text-gray-700"><strong>System Action:</strong> Kitchen Batch #BATCH-2026-004 is currently cooking to replenish this stock.</p>
+                    </div>
+
+                    <div class="flex space-x-3">
+                        <button onclick="closeModal()" class="w-1/2 bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm">BACK TO DELIVERIES</button>
+                        <button onclick="closeModal(); switchTab('active-batches');" class="w-1/2 bg-brand-accent text-white font-bold py-2.5 rounded-lg text-sm hover:bg-green-700">VIEW ACTIVE KITCHEN BATCH</button>
+                    </div>
+                `);
+            }
+        }
+
+        function dispatchDeliverySuccess() {
+            showModalHtml(`
+                <div class="text-center py-4 space-y-4">
+                    <div class="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">✓</div>
+                    <h2 class="text-2xl font-black text-brand-dark">SHIPMENT DISPATCHED SUCCESSFULLY!!</h2>
+                    <p class="text-sm text-gray-600">Inventory updated and trip status marked as In-Transit.</p>
+                    <div class="flex justify-center space-x-3 pt-2">
+                        <button onclick="printDocument('Delivery Waybill - #DEL-2026-001', 'Destination: Balagtas Branch\\nDriver: Kuya Brent')" class="bg-amber-500 text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-amber-600">PRINT WAYBILL</button>
+                        <button onclick="closeModal()" class="bg-brand-accent text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-green-700">DONE & RETURN TO DELIVERIES</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        // PURCHASE ORDERS MODAL
+        function openPOModal(poNum) {
+            showModalHtml(`
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+                <h2 class="text-xl font-bold text-brand-dark">Purchase Order Details - ${poNum}</h2>
+                <p class="text-xs text-gray-500 mb-4">Supplier: Magnolia Poultry | Trigger: Chicken Stock hit Min Limit 150kg</p>
+
+                <div class="bg-gray-50 border p-3 rounded-lg text-xs mb-4 space-y-1 text-gray-700">
+                    <p><strong>Item to Purchase:</strong> Dressed Chicken (300.0 kg @ ₱ 45,000.00)</p>
+                    <p><strong>Delivery Lead Time:</strong> 2 Days | Expected: Oct 4, 2026</p>
+                    <p class="text-sm font-bold text-brand-dark pt-1">Total Order Amount: ₱ 45,000.00</p>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button onclick="closeModal()" class="w-1/2 bg-red-600 text-white font-bold py-2.5 rounded-lg text-sm">REJECT / EDIT</button>
+                    <button onclick="approvePOSuccess('${poNum}')" class="w-1/2 bg-brand-accent text-white font-bold py-2.5 rounded-lg text-sm hover:bg-green-700">APPROVE & SEND TO SUPPLIER</button>
+                </div>
+            `);
+        }
+
+        function approvePOSuccess(poNum) {
+            showModalHtml(`
+                <div class="text-center py-4 space-y-4">
+                    <div class="w-14 h-14 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">✓</div>
+                    <h2 class="text-2xl font-black text-brand-dark">PURCHASE ORDER APPROVED & SENT!</h2>
+                    <p class="text-sm text-gray-600">PO notification dispatched to Magnolia Poultry sales system.</p>
+                    <div class="flex justify-center space-x-3 pt-2">
+                        <button onclick="printDocument('Purchase Order PDF - ${poNum}', 'Supplier: Magnolia Poultry\\nAmount: P 45,000.00')" class="bg-red-600 text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-red-700">PRINT PO PDF</button>
+                        <button onclick="closeModal()" class="bg-brand-accent text-white font-bold px-4 py-2 rounded-lg text-xs hover:bg-green-700">DONE & RETURN TO PO LIST</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        // DOCUMENT PRINTING SIMULATOR
+        function printDocument(title, details) {
+            const printArea = document.getElementById('printable-area');
+            printArea.innerHTML = `
+                <div style="font-family: Arial, sans-serif; border: 2px solid #1b3b1e; padding: 30px; max-width: 600px; margin: auto;">
+                    <h1 style="color: #1b3b1e; border-bottom: 2px solid #1b3b1e; padding-bottom: 10px;">CHICK PASTIL COMMISSARY</h1>
+                    <h2 style="margin-top: 20px;">${title}</h2>
+                    <pre style="font-size: 14px; background: #f3f4f6; padding: 15px; border-radius: 5px; white-space: pre-wrap;">${details}</pre>
+                </div>
+            `;
+            window.print();
+        }
+    </script>
+</body>
+</html>
