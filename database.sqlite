@@ -1,32 +1,45 @@
-CREATE TABLE IF NOT EXISTS raw_materials (
+DROP TABLE IF EXISTS raw_materials;
+CREATE TABLE raw_materials (
     id TEXT PRIMARY KEY,
     material_name TEXT,
     current_stock REAL,
     status TEXT
 );
+INSERT INTO raw_materials VALUES ('#RM-1001', 'Dressed Chicken', 120.0, 'Low Stock');
+INSERT INTO raw_materials VALUES ('#RM-1002', 'Jasmine Rice', 450.0, 'In Stock');
+INSERT INTO raw_materials VALUES ('#RM-1003', 'Cooking Oil', 80.0, 'In Stock');
 
-CREATE TABLE IF NOT EXISTS active_batches (
+DROP TABLE IF EXISTS active_batches;
+CREATE TABLE active_batches (
     batch_id TEXT PRIMARY KEY,
     recipe_target TEXT,
     target_yield INTEGER,
     status TEXT
 );
+INSERT INTO active_batches VALUES ('#BATCH-2026-004', 'Classic Chicken Pastil Tubs', 300, 'Low Ingredient Alert');
+INSERT INTO active_batches VALUES ('#BATCH-2026-005', 'Spicy Pastil Tubs', 150, 'Ready to Start');
 
-CREATE TABLE IF NOT EXISTS deliveries (
+DROP TABLE IF EXISTS deliveries;
+CREATE TABLE deliveries (
     delivery_id TEXT PRIMARY KEY,
     branch_name TEXT,
     items_summary TEXT,
     status TEXT
 );
+INSERT INTO deliveries VALUES ('#DEL-2026-001', 'Balagtas', '70 Total Units', 'Ready to Dispatch');
+INSERT INTO deliveries VALUES ('#DEL-2026-003', 'Meycauayan', '50 Total Units', 'Low Cold Storage');
 
-CREATE TABLE IF NOT EXISTS purchase_orders (
+DROP TABLE IF EXISTS purchase_orders;
+CREATE TABLE purchase_orders (
     po_number TEXT PRIMARY KEY,
     supplier_name TEXT,
     total_value REAL,
     status TEXT
 );
+INSERT INTO purchase_orders VALUES ('#PO-2026-089', 'Magnolia Poultry', 45000.00, 'Draft Pending');
 
-CREATE TABLE IF NOT EXISTS wastages (
+DROP TABLE IF EXISTS wastages;
+CREATE TABLE wastages (
     id TEXT PRIMARY KEY,
     branch_name TEXT,
     item_name TEXT,
@@ -36,20 +49,7 @@ CREATE TABLE IF NOT EXISTS wastages (
     reason TEXT,
     date_recorded TEXT
 );
-
-INSERT INTO raw_materials VALUES ('#RM-1001', 'Dressed Chicken', 120.0, 'Low Stock');
-INSERT INTO raw_materials VALUES ('#RM-1002', 'Jasmine Rice', 450.0, 'In Stock');
-INSERT INTO raw_materials VALUES ('#RM-1003', 'Cooking Oil', 80.0, 'In Stock');
-
-INSERT INTO active_batches VALUES ('#BATCH-2026-004', 'Classic Chicken Pastil Tubs', 300, 'Low Ingredient Alert');
-INSERT INTO active_batches VALUES ('#BATCH-2026-005', 'Spicy Pastil Tubs', 150, 'Ready to Start');
-
-INSERT INTO deliveries VALUES ('#DEL-2026-001', 'Balagtas Branch', '70 Total Units', 'Ready to Dispatch');
-INSERT INTO deliveries VALUES ('#DEL-2026-003', 'Meycauayan Branch', '50 Total Units', 'Low Cold Storage');
-
-INSERT INTO purchase_orders VALUES ('#PO-2026-089', 'Magnolia Poultry', 45000.00, 'Draft Pending');
-
-INSERT INTO wastages VALUES ('#WASTE-2026-001', 'Balagtas Branch', 'Dressed Chicken', 5.0, 'kg', 900.00, 'Spoiled due to power loss', '2026-10-30');
-INSERT INTO wastages VALUES ('#WASTE-2026-002', 'Meycauayan Branch', 'Jasmine Rice', 10.0, 'kg', 500.00, 'Package torn / Damaged', '2026-10-30');
-INSERT INTO wastages VALUES ('#WASTE-2026-003', 'Balagtas Branch', 'Cooking Oil', 3.0, 'liters', 270.00, 'Storage container leak', '2026-10-29');
-INSERT INTO wastages VALUES ('#WASTE-2026-004', 'Marilao Branch', 'Dressed Chicken', 8.0, 'kg', 1440.00, 'Expired / Passed Shelf Life', '2026-10-28');
+INSERT INTO wastages VALUES ('#WASTE-2026-001', 'Borol', 'Dressed Chicken', 12.0, 'kg', 2300.00, 'Overproduction on weekday lunch rice', '2026-10-30');
+INSERT INTO wastages VALUES ('#WASTE-2026-002', 'Balagtas', 'Dressed Chicken', 10.0, 'kg', 1900.00, 'Minor spoilage in commissary transfer', '2026-10-30');
+INSERT INTO wastages VALUES ('#WASTE-2026-003', 'Northville 6', 'Cooking Oil', 9.0, 'liters', 1620.00, 'Slow-moving stock nearing expiry', '2026-10-29');
+INSERT INTO wastages VALUES ('#WASTE-2026-004', 'Pandi', 'Jasmine Rice', 15.0, 'kg', 1500.00, 'Surplus shredded chicken after afternoon peak', '2026-10-28');
