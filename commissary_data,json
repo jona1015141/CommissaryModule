@@ -50,46 +50,50 @@
       "status": "Draft Pending"
     }
   ],
-  "wastages": [
-    {
-      "id": "#WASTE-2026-001",
-      "branch_name": "Borol",
-      "item_name": "Dressed Chicken",
-      "quantity": 12.0,
-      "unit": "kg",
-      "estimated_cost": 2300.00,
-      "reason": "Overproduction on weekday lunch rice",
-      "date_recorded": "2026-10-30"
-    },
-    {
-      "id": "#WASTE-2026-002",
-      "branch_name": "Balagtas",
-      "item_name": "Dressed Chicken",
-      "quantity": 10.0,
-      "unit": "kg",
-      "estimated_cost": 1900.00,
-      "reason": "Minor spoilage in commissary transfer",
-      "date_recorded": "2026-10-30"
-    },
-    {
-      "id": "#WASTE-2026-003",
-      "branch_name": "Northville 6",
-      "item_name": "Cooking Oil",
-      "quantity": 9.0,
-      "unit": "liters",
-      "estimated_cost": 1620.00,
-      "reason": "Slow-moving stock nearing expiry",
-      "date_recorded": "2026-10-29"
-    },
-    {
-      "id": "#WASTE-2026-004",
-      "branch_name": "Pandi",
-      "item_name": "Jasmine Rice",
-      "quantity": 15.0,
-      "unit": "kg",
-      "estimated_cost": 1500.00,
-      "reason": "Surplus shredded chicken after afternoon peak",
-      "date_recorded": "2026-10-28"
-    },
-  ]
+ "wastages": [
+      {
+        "id": "#WASTE-2026-001",
+        "branch_name": "Borol",
+        "item_name": "Dressed Chicken",
+        "quantity": 12.0,
+        "unit": "kg",
+        "estimated_cost": 2300.00,
+        "reason": "Overproduction on weekday lunch rice",
+        "date_recorded": "2026-10-05",
+        "date": "2026-10-05"
+      },
+      {
+        "id": "#WASTE-2026-002",
+        "branch_name": "Balagtas",
+        "item_name": "Dressed Chicken",
+        "quantity": 10.0,
+        "unit": "kg",
+        "estimated_cost": 1900.00,
+        "reason": "Minor spoilage in commissary transfer",
+        "date_recorded": "2026-10-12",
+        "date": "2026-10-12"
+      },
+      {
+        "id": "#WASTE-2026-003",
+        "branch_name": "Northville 6",
+        "item_name": "Cooking Oil",
+        "quantity": 9.0,
+        "unit": "liters",
+        "estimated_cost": 1620.00,
+        "reason": "Slow-moving stock nearing expiry",
+        "date_recorded": "2026-10-19",
+        "date": "2026-10-19"
+      },
+      {
+        "id": "#WASTE-2026-004",
+        "branch_name": "Pandi",
+        "item_name": "Jasmine Rice",
+        "quantity": 15.0,
+        "unit": "kg",
+        "estimated_cost": 1500.00,
+        "reason": "Surplus shredded chicken after afternoon peak",
+        "date_recorded": "2026-10-26",
+        "date": "2026-10-26"
+      }
+    ]
 }
